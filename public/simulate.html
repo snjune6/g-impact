@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>G-IMPACT 반응형 시뮬레이션</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #10141c;
+      color: #fff;
+      font-family: "Pretendard", "Apple SD Gothic Neo", sans-serif;
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px 16px;
+      padding: 12px 16px;
+      background: #050814;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    strong { font-size: 14px; letter-spacing: -0.2px; }
+    .modes { display: flex; flex-wrap: wrap; gap: 8px; }
+    button {
+      height: 36px;
+      padding: 0 14px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      background: transparent;
+      color: #fff;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    button[aria-pressed="true"] { background: #08f; border-color: #08f; }
+    .size { margin-left: auto; color: #a9bdcd; font-size: 13px; }
+    .stage {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px 16px 28px;
+      min-height: 0;
+      overflow: auto;
+    }
+    .device {
+      width: 390px;
+      height: min(844px, calc(100vh - 96px));
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 28px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+    }
+    .device.full {
+      width: 100%;
+      height: calc(100vh - 96px);
+      border-radius: 12px;
+    }
+    iframe { width: 100%; height: 100%; border: 0; background: #050814; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>반응형 시뮬레이션</strong>
+    <div class="modes" role="group" aria-label="화면 크기">
+      <button type="button" data-width="390" data-full="false" aria-pressed="true">모바일 390</button>
+      <button type="button" data-width="768" data-full="false">태블릿 768</button>
+      <button type="button" data-width="1280" data-full="false">데스크톱 1280</button>
+      <button type="button" data-width="100%" data-full="true">전체 너비</button>
+    </div>
+    <span class="size" id="size">390px</span>
+  </header>
+  <div class="stage">
+    <div class="device" id="device">
+      <iframe src="index.html" title="G-IMPACT 페이지 미리보기"></iframe>
+    </div>
+  </div>
+  <script>
+    const device = document.getElementById("device");
+    const size = document.getElementById("size");
+    document.querySelectorAll(".modes button").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".modes button").forEach((item) => item.setAttribute("aria-pressed", "false"));
+        button.setAttribute("aria-pressed", "true");
+        const full = button.dataset.full === "true";
+        device.classList.toggle("full", full);
+        device.style.width = full ? "" : button.dataset.width + "px";
+        size.textContent = full ? "브라우저 너비" : button.dataset.width + "px";
+      });
+    });
+  </script>
+</body>
+</html>
