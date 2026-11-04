@@ -151,6 +151,7 @@ button, input { font-family: inherit; }
     opacity: 1;
     transform: none;
   }
+  .deck-card, .deck-panel, .deck-top { transition: none; }
 }
 
 .problem {
@@ -207,23 +208,69 @@ button, input { font-family: inherit; }
 }
 .screen h2 { margin: 0 0 48px; text-align: center; font-size: 50px; line-height: 1.3; }
 .screen h2 span { color: #08f; }
-.screen-card {
-  display: grid;
-  grid-template-columns: minmax(280px, 526px) minmax(0, 1fr);
-  gap: 40px;
-  align-items: center;
-  padding: 40px;
-  border-radius: 16px;
-  background: #08f;
+.screen-card { position: relative; word-break: keep-all; }
+.screen-play {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: transparent;
+  cursor: pointer;
 }
-.shot { background: #fafafa; border-radius: 20px; overflow: hidden; color: #121212; }
-.shot header { display: flex; justify-content: space-between; align-items: center; height: 90px; padding: 0 30px; background: transparent; }
-.shot header strong { font-size: 24px; letter-spacing: -0.72px; }
-.live { padding: 12px 24px; border: 1px solid #3e80eb; border-radius: 200px; background: rgba(63, 128, 234, 0.12); color: #3f80ea; font-size: 16px; }
-.shot img { width: 100%; height: 230px; object-fit: cover; border-radius: 0 0 20px 20px; }
-.shot figcaption { margin: 8px 0 0; text-align: right; color: rgba(255, 255, 255, 0.6); font-size: 16px; }
+.screen-card:not(.is-ready) .screen-play { display: none; }
+.screen-card:focus-within:has(.screen-play:focus-visible) { outline: 2px solid #fff; outline-offset: 4px; }
+.deck { display: flex; flex-direction: column; }
+.deck-card {
+  height: 0;
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  transition: height 300ms ease-out, margin-top 300ms ease-out;
+}
+.deck-card.is-open { height: auto; }
+.deck-card:nth-child(1) { z-index: 1; }
+.deck-card:nth-child(2) { z-index: 2; }
+.deck-card:nth-child(3) { z-index: 3; }
+.deck-card:nth-child(4) { z-index: 4; }
+.deck-card.is-peek + .deck-card.is-peek,
+.deck-card.is-peek + .deck-card.is-open { margin-top: -22px; }
+.deck-card[data-tone="blue"] { background: #0189ff; color: #fff; }
+.deck-card[data-tone="navy"] { background: #153a7f; color: #fff; }
+.deck-card[data-tone="slate"] { background: #6b707c; color: #fff; }
+.deck-card[data-tone="light"] { background: #e1e1e1; color: #171717; }
+.deck-top { padding: 16px 16px 46px; transition: padding-bottom 300ms ease-out; }
+.deck-card.is-open .deck-top { padding-bottom: 8px; }
+.deck-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 82px;
+  padding: 0 28px;
+  background: #fff;
+  border-radius: 18px;
+  color: #171717;
+}
+.deck-head strong { font-size: 24px; font-weight: 600; letter-spacing: -0.72px; }
+.live { padding: 12px 24px; border: 1px solid #3e80eb; border-radius: 200px; background: rgba(63, 128, 234, 0.12); color: #3f80ea; font-size: 16px; white-space: nowrap; }
+.deck-copy {
+  display: grid;
+  grid-template-columns: minmax(240px, 520px) minmax(0, 1fr);
+  gap: 36px;
+  align-items: center;
+  overflow: hidden;
+  min-height: 0;
+  padding: 8px 16px 24px;
+}
+.deck-copy figure { margin: 0; }
+.deck-copy img { display: block; width: 100%; height: auto; border-radius: 12px; }
+.deck-copy img.photo { height: 230px; object-fit: cover; border-radius: 16px; }
+.deck-copy figcaption { margin: 8px 0 0; text-align: right; color: rgba(255, 255, 255, 0.65); font-size: 15px; }
+.deck-card[data-tone="light"] .deck-copy figcaption { color: rgba(23, 23, 23, 0.45); }
 .screen-card h3 { margin: 0; font-size: 36px; font-weight: 600; letter-spacing: -0.9px; }
-.screen-card p { margin: 31px 0 0; font-size: 18px; line-height: 1.4; letter-spacing: -0.54px; }
+.screen-card p { margin: 24px 0 0; font-size: 18px; line-height: 1.45; letter-spacing: -0.54px; }
 
 .cases { position: relative; padding: 180px 0; overflow: hidden; }
 .cases-bg, .cases-shade { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -437,8 +484,14 @@ input[type="text"], input[type="email"], input[type="tel"] {
 }
 
 @media (max-width: 1100px) {
-  .screen-card, .case-grid, .review-layout { grid-template-columns: 1fr; }
+  .case-grid, .review-layout { grid-template-columns: 1fr; }
+  .deck-copy { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); }
+  .deck-copy img.photo { height: auto; aspect-ratio: 16 / 10; }
   .quote:nth-child(even) { margin-top: 0; }
+}
+
+@media (max-width: 720px) {
+  .deck-copy { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 980px) {
@@ -488,10 +541,14 @@ input[type="text"], input[type="email"], input[type="tel"] {
   .bubbles { align-items: stretch; width: 100%; }
   .num, .checks { min-height: 0; padding: 24px; }
   .num p, .num b, .case h3, .org h3, .quote h3 { font-size: 22px; }
-  .screen-card h3, .bridge h3, .compare h3, .outputs h2 { font-size: 24px; }
-  .screen-card, .case, .more, form { padding: 20px; }
-  .shot header { height: auto; flex-wrap: wrap; gap: 8px; padding: 16px 18px; }
-  .shot header strong { font-size: 18px; }
+  .screen-card h3, .bridge h3, .compare h3, .outputs h2 { font-size: 22px; line-height: 1.35; }
+  .case, .more, form { padding: 20px; }
+  .deck-head { height: auto; flex-wrap: nowrap; min-height: 0; gap: 8px; padding: 14px 16px; }
+  .deck-head strong { min-width: 0; font-size: 16px; letter-spacing: -0.4px; }
+  .live { flex: none; padding: 8px 14px; font-size: 14px; }
+  .deck-copy { padding: 8px 16px 20px; gap: 12px; }
+  .deck-copy figcaption { font-size: 13px; }
+  .screen-card p { margin-top: 12px; font-size: 16px; }
   .case { min-height: 0; }
   .case img { width: 100%; height: auto; max-height: 320px; }
   .product { min-height: 0; padding: 32px 24px; }
@@ -560,6 +617,13 @@ input[type="text"], input[type="email"], input[type="tel"] {
 
 @media (max-width: 640px) {
   .wrap { width: calc(100% - 32px); }
+  .deck-top { padding: 12px 12px 32px; }
+  .deck-card.is-open .deck-top { padding-bottom: 8px; }
+  .deck-head { padding: 12px 14px; }
+  .deck-head strong { font-size: 15px; }
+  .deck-copy { padding: 4px 12px 16px; }
+  .screen-card h3 { font-size: 20px; }
+  .screen-card p { font-size: 15px; }
   .stats { flex-direction: column; align-items: stretch; }
   .hero h1, .problem h2, .answer h2, .screen h2, .cases h2, .products h2, .reviews h2, .org h2, .faq h2, .bridge .closer { font-size: 28px; }
   .stat { width: 100%; }

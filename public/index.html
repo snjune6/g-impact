@@ -77,15 +77,69 @@
   <section class="screen" id="process">
     <div class="wrap">
       <h2>실제 화면으로<br> <span>확인해 보세요</span></h2>
-      <article class="screen-card">
-        <figure class="shot">
-          <header><strong>대면 인터뷰 · 진단 입력</strong><span class="live">진행중</span></header>
-          <img src="assets/interview.png" alt="인터뷰 화면 예시">
-          <figcaption>예시 이미지</figcaption>
-        </figure>
-        <div>
-          <h3>인터뷰 한 번이면 분석이 시작됩니다</h3>
-          <p>담당 코치가 대표님을 직접 만나 인터뷰하고, 코칭과 코칭 사이에는 AI엔진이 그 내용으로 분석을 신속하고 밀도 있게 이어 갑니다.</p>
+      <article class="screen-card is-ready" id="screen-card">
+        <button type="button" class="screen-play">다음 화면 보기</button>
+        <div class="deck">
+          <section class="deck-card is-open" data-tone="blue">
+            <div class="deck-shell">
+            <div class="deck-top"><header class="deck-head"><strong>대면 인터뷰 · 진단 입력</strong><span class="live">진행중</span></header></div>
+            <div class="deck-panel"><div class="deck-copy">
+              <figure>
+                <img class="photo" src="assets/interview.png" alt="인터뷰 화면 예시">
+                <figcaption>예시 이미지</figcaption>
+              </figure>
+              <div>
+                <h3>인터뷰 한 번이면 분석이 시작됩니다</h3>
+                <p>담당 코치가 대표님을 직접 만나 인터뷰하고, 코칭과 코칭 사이에는 AI엔진이 그 내용으로 분석을 신속하고 밀도 있게 이어 갑니다.</p>
+              </div>
+            </div></div>
+            </div>
+          </section>
+          <section class="deck-card" data-tone="navy" aria-hidden="true">
+            <div class="deck-shell">
+            <div class="deck-top"><header class="deck-head"><strong>사업분석 · 한눈에</strong><span class="live">분석결과</span></header></div>
+            <div class="deck-panel"><div class="deck-copy">
+              <figure>
+                <img src="assets/analysis-ui.png" alt="사업분석 화면">
+                <figcaption>지임팩트 자사 예시 화면</figcaption>
+              </figure>
+              <div>
+                <h3>분야 지식을 담아 두고 분석합니다</h3>
+                <p>에너지, 자원순환, 농식품·푸드테크, 기후 데이터·탄소회계 분야와 기후 정책·기후금융 공통 지식을 미리 담아 두고, 분석할 때 회사 사업에 맞는 내용을 찾아 씁니다.</p>
+              </div>
+            </div></div>
+            </div>
+          </section>
+          <section class="deck-card" data-tone="slate" aria-hidden="true">
+            <div class="deck-shell">
+            <div class="deck-top"><header class="deck-head"><strong>목표 · 핵심결과 관리</strong><span class="live">분기목표</span></header></div>
+            <div class="deck-panel"><div class="deck-copy">
+              <figure>
+                <img src="assets/goals-ui.png" alt="목표와 핵심결과 화면">
+                <figcaption>지임팩트 자사 예시 화면</figcaption>
+              </figure>
+              <div>
+                <h3>3년 로드맵과 목표를 한 흐름에</h3>
+                <p>먼저 팔 것과 필요한 자금, 분기 목표까지 한 흐름으로 정리하고 코치와 함께 점검합니다.</p>
+              </div>
+            </div></div>
+            </div>
+          </section>
+          <section class="deck-card" data-tone="light" aria-hidden="true">
+            <div class="deck-shell">
+            <div class="deck-top"><header class="deck-head"><strong>변화이론맵</strong><span class="live">임팩트 지표</span></header></div>
+            <div class="deck-panel"><div class="deck-copy">
+              <figure>
+                <img src="assets/impact-ui.png" alt="변화이론맵과 임팩트 지표 화면">
+                <figcaption>지임팩트 자사 예시 화면</figcaption>
+              </figure>
+              <div>
+                <h3>기술의 임팩트를 숫자로</h3>
+                <p>사업화 전략과 같은 흐름 안에서 변화이론맵과 임팩트 지표를 설계해, 우리 기술이 만드는 변화를 투자자와 기관에 보여 줍니다.</p>
+              </div>
+            </div></div>
+            </div>
+          </section>
         </div>
       </article>
     </div>
@@ -292,6 +346,78 @@
     document.getElementById("consult").addEventListener("submit", (event) => {
       event.preventDefault();
       event.currentTarget.querySelector(".done").hidden = false;
+    });
+
+    const screenCard = document.getElementById("screen-card");
+    const screenSlides = [...screenCard.querySelectorAll(".deck-card")];
+    const screenMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 300;
+    let screenIndex = 0;
+    let screenPlaying = false;
+
+    function measureDeck(card, mode) {
+      if (mode === "hidden") return 0;
+      const probe = card.cloneNode(true);
+      probe.classList.toggle("is-open", mode === "open");
+      probe.classList.toggle("is-peek", mode === "peek");
+      probe.setAttribute("aria-hidden", "true");
+      probe.style.cssText = "position:absolute;width:" + card.getBoundingClientRect().width + "px;height:auto;overflow:visible;visibility:hidden;pointer-events:none;transition:none;margin:0;";
+      card.parentElement.appendChild(probe);
+      const height = mode === "peek"
+        ? probe.querySelector(".deck-top").offsetHeight
+        : probe.querySelector(".deck-shell").offsetHeight;
+      probe.remove();
+      return height;
+    }
+
+    function showScreen(next) {
+      screenIndex = next;
+      const modes = screenSlides.map((_, index) => (index === next ? "open" : index < next ? "peek" : "hidden"));
+      const targets = screenSlides.map((card, index) => measureDeck(card, modes[index]));
+      screenSlides.forEach((card) => {
+        card.style.height = card.getBoundingClientRect().height + "px";
+      });
+      screenSlides[0].getBoundingClientRect();
+      screenSlides.forEach((card, index) => {
+        const open = modes[index] === "open";
+        card.classList.toggle("is-open", open);
+        card.classList.toggle("is-peek", modes[index] === "peek");
+        card.style.height = targets[index] + "px";
+        if (open) card.removeAttribute("aria-hidden");
+        else card.setAttribute("aria-hidden", "true");
+      });
+    }
+
+    window.addEventListener("resize", () => {
+      const modes = screenSlides.map((card) => (card.classList.contains("is-open") ? "open" : card.classList.contains("is-peek") ? "peek" : "hidden"));
+      screenSlides.forEach((card, index) => {
+        card.style.transition = "none";
+        card.style.height = measureDeck(card, modes[index]) + "px";
+      });
+      screenSlides[0].getBoundingClientRect();
+      screenSlides.forEach((card) => {
+        card.style.transition = "";
+      });
+    });
+
+    function advanceScreen() {
+      const next = (screenIndex + 1) % screenSlides.length;
+      showScreen(next);
+      if (next === 0) {
+        window.setTimeout(() => {
+          screenPlaying = false;
+          screenCard.classList.add("is-ready");
+        }, screenMotion);
+        return;
+      }
+      window.setTimeout(advanceScreen, 800 + screenMotion);
+    }
+
+    screenCard.querySelector(".screen-play").addEventListener("click", () => {
+      if (screenPlaying || screenIndex !== 0) return;
+      screenPlaying = true;
+      screenCard.classList.remove("is-ready");
+      showScreen(1);
+      window.setTimeout(advanceScreen, 800 + screenMotion);
     });
   </script>
 </body>
