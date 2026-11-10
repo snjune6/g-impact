@@ -838,17 +838,49 @@ button, input { font-family: inherit; }
   font-weight: 600;
 }
 .compare h3 { margin: 120px 0 0; text-align: center; font-size: 34px; letter-spacing: -0.68px; }
-.table-wrap { overflow-x: auto; margin-top: 20px; }
-table { width: 100%; min-width: 860px; border-collapse: collapse; }
+.table-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  margin-top: 20px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: rgba(5, 12, 28, 0.55);
+}
+.table-hint {
+  display: none;
+  margin: 10px 0 0;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 13px;
+  text-align: center;
+}
+table { width: max(100%, 920px); min-width: 920px; border-collapse: collapse; }
 th, td {
+  min-width: 148px;
   padding: 18px 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
   vertical-align: middle;
   font-size: 15px;
+  word-break: keep-all;
 }
 th { color: #fff; font-size: 16px; font-weight: 700; }
-th:first-child, td.label { text-align: left; color: #a9bdcd; font-weight: 700; }
+th:first-child,
+td.label {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  min-width: 108px;
+  max-width: 120px;
+  text-align: left;
+  color: #a9bdcd;
+  font-weight: 700;
+  background: #0b1730;
+  box-shadow: 8px 0 12px rgba(0, 0, 0, 0.18);
+}
 td { background: rgba(255, 255, 255, 0.05); color: #eaf2f6; }
 th.us {
   background: #0088ff;
@@ -1232,7 +1264,21 @@ input[type="text"], input[type="tel"], input[type="email"] {
   .steps .step-label { font-size: 12px; }
   .catalog h3 { font-size: 24px; }
   .bridge .closer { font-size: 24px; }
-  .table-wrap { margin-left: -16px; margin-right: -16px; padding: 0 16px; }
+  .table-hint { display: block; }
+  .table-wrap {
+    margin-top: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 136, 255, 0.7) rgba(255, 255, 255, 0.08);
+  }
+  .table-wrap::-webkit-scrollbar { height: 8px; }
+  .table-wrap::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(0, 136, 255, 0.7);
+  }
+  th, td { min-width: 136px; padding: 14px 12px; font-size: 13px; }
+  th { font-size: 14px; }
+  th:first-child,
+  td.label { min-width: 88px; max-width: 96px; font-size: 13px; }
   .footer .wrap { flex-direction: column; }
   .choices { gap: 8px; }
   .choices button { height: 44px; padding: 0 14px; font-size: 14px; }
